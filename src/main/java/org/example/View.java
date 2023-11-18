@@ -5,24 +5,32 @@ import java.util.Scanner;
 public class View {
     Scanner scanner = new Scanner(System.in);
     Predictor predictor = new Predictor();
-    CleanerData cleaner = new CleanerData();
+    CleanedData cleaner = new CleanedData();
 
     public void getUserData() {
         String userPlate;
         String userDate;
-        String userTime;
+        String userHour;
         do {
             userPlate = readString("Enter the licence plate: ");
             userDate = readString("Enter the date: ");
-            userTime = readString("Enter the time: ");
+            userHour = readString("Enter the time: ");
 
-        } while (!cleaner.isValid(userPlate, userDate, userTime));
+        } while (!cleaner.isValid(userPlate, userDate, userHour));
 
-        predictor.getCleanedData(userPlate, userDate, userTime);
+        predictor.getCleanedData(cleaner);
     }
 
     private String readString(String message){
         System.out.print(message);
         return scanner.next();
+    }
+
+    public void imprimirResultado(boolean isRestrictRoad) {
+        if (isRestrictRoad) {
+            System.out.println("Restrict");
+        } else {
+            System.out.println("Allowed");
+        }
     }
 }

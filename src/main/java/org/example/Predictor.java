@@ -8,23 +8,41 @@ public class Predictor {
     int digitPlate;
     int day;
     Date hour;
-    View view = new View();
+    View view;
+    boolean isRestrictRoad;
+
+    public Predictor(View view) {
+        this.view = view;
+    }
+
     public void getCleanedData(CleanedData cleaner) {
         digitPlate = cleaner.cleanedPlate;
+        System.out.println(digitPlate);
         day = cleaner.cleanedDate;
+        System.out.println(day);
         hour = cleaner.cleanedHour;
+        System.out.println(hour);
 
-        calculateRestrictRoad();
+        calculateRestrictedRoad();
     }
-    private void calculateRestrictRoad() {
-        boolean isRestrictRoad = isRestrictedDay(digitPlate, day) && isRestrictedHour(hour);
-        view.imprimirResultado(isRestrictRoad);
+
+    private void calculateRestrictedRoad() {
+        System.out.println(isRestrictedDay(digitPlate, day));
+        System.out.println(isRestrictedHour(hour));
+        isRestrictRoad = isRestrictedDay(digitPlate, day) && isRestrictedHour(hour);
+        sendResult();
 
     }
+
+    private void sendResult() {
+        view.printResult(isRestrictRoad);
+    }
+
     private boolean isRestrictedDay(int digitPlate, int day) {
-        if (day == 5 && digitPlate == 10) return false;
-        if (day * 2 == digitPlate || day * 2 - 1 == digitPlate) return false;
-        return true;
+        if (day == 5 && digitPlate == 0) return true;
+        if (day * 2 == digitPlate || day * 2 - 1 == digitPlate) return true;
+        return false;
+
 
     }
 
@@ -42,12 +60,9 @@ public class Predictor {
             throw new RuntimeException(e);
         }
 
-        return (hour.after(startInterval1) && hour.before(endInterval1)) ||
-                (hour.after(startInterval2) && hour.before(endInterval2));
+        return (hour.after(startInterval1) && hour.before(endInterval1)) || (hour.after(startInterval2) && hour.before(endInterval2));
 
     }
-
-
 
 
 }

@@ -8,42 +8,43 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CleanedData {
-    int cleanedPlate;
-    int cleanedDate;
-    Date cleanedHour;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+    int digitPlate;
+    int numberDay;
+    Date formatedHour;
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-yyyy");
+    private static final SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("HH:mm");
+
     public boolean clean(String userPlate, String userDate, String userHour) {
-        // Validación de datos
-        if (!isValidData(userPlate, userDate, userHour)) return false;
+        if (!isValidData(userPlate, userDate, userHour)) {
+            return false;
+        }
 
         try {
-            // Formateo de datos válidos, como digito de placa y día de semana
-            formatData(userPlate,userDate,userHour);
+            digitPlate = formatPlate(userPlate);
+            numberDay = formatDate(userDate);
+            formatedHour = formatHour(userHour);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
         return true;
     }
 
-    private void formatData(String userPlate, String userDate, String userHour) throws ParseException {
-        formatValidPlate(userPlate);
-        formatValidDate(userDate);
+    private Date formatHour(String userHour) throws ParseException {
+        return HOUR_FORMAT.parse(userHour);
     }
 
-    private void formatValidDate(String userDate) throws ParseException {
-        Date formatedDate = dateFormat.parse(userDate);
-        cleanedDate = getDay(formatedDate);
+    private int formatDate(String userDate) throws ParseException {
+        Date formatedDate = DATE_FORMAT.parse(userDate);
+        return getDay(formatedDate);
     }
-    private void formatValidPlate(String userPlate) {
-        char cleanedPlateC = userPlate.charAt(userPlate.length() - 1);
-        cleanedPlate = Character.getNumericValue(cleanedPlateC);
+    private int formatPlate(String userPlate) {
+        char charDigitPlate = userPlate.charAt(userPlate.length() - 1);
+        return Character.getNumericValue(charDigitPlate);
     }
 
     private boolean isValidData(String userPlate, String userDate, String userHour) {
-        if (userPlate == null || userDate == null || userHour == null) return false;
-        if (!(isValidPlate(userPlate) && isValidDate(userDate) && isValidHour(userHour))) return false;
-
-        return true;
+        return isValidPlate(userPlate) && isValidDate(userDate) && isValidHour(userHour);
     }
 
     private boolean isValidPlate(String userPlate) {
@@ -55,22 +56,23 @@ public class CleanedData {
         return matcher.matches();
     }
     private boolean isValidDate(String userDate) {
-
         try {
-            dateFormat.parse(userDate);
+            DATE_FORMAT.parse(userDate);
+            return true;
         } catch (ParseException e) {
             return false;
         }
-        return true;
+
     }
     private boolean isValidHour(String userHour) {
         SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
         try {
-            cleanedHour = hourFormat.parse(userHour);
+            formatedHour = hourFormat.parse(userHour);
+            return true;
         } catch (ParseException e) {
             return false;
         }
-        return true;
+
     }
 
     private int getDay(Date formatedDate) {
@@ -79,8 +81,8 @@ public class CleanedData {
 
 
         int numberDay = calendar.get(Calendar.DAY_OF_WEEK);
-        numberDay = (numberDay + 5) % 7 + 1;
+        return (numberDay + 5) % 7 + 1;
 
-        return numberDay;
+
     }
 }

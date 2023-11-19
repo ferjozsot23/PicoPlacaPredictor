@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Predictor {
     int digitPlate;
-    int day;
+    int numberDay;
     Date hour;
     View view;
     boolean isRestrictRoad;
@@ -16,20 +16,20 @@ public class Predictor {
     }
 
     public void getCleanedData(CleanedData cleaner) {
-        digitPlate = cleaner.cleanedPlate;
+        digitPlate = cleaner.digitPlate;
         System.out.println(digitPlate);
-        day = cleaner.cleanedDate;
-        System.out.println(day);
-        hour = cleaner.cleanedHour;
+        numberDay = cleaner.numberDay;
+        System.out.println(numberDay);
+        hour = cleaner.formatedHour;
         System.out.println(hour);
 
         calculateRestrictedRoad();
     }
 
     private void calculateRestrictedRoad() {
-        System.out.println(isRestrictedDay(digitPlate, day));
+        System.out.println(isRestrictedDay(digitPlate, numberDay));
         System.out.println(isRestrictedHour(hour));
-        isRestrictRoad = isRestrictedDay(digitPlate, day) && isRestrictedHour(hour);
+        isRestrictRoad = isRestrictedDay(digitPlate, numberDay) && isRestrictedHour(hour);
         sendResult();
 
     }

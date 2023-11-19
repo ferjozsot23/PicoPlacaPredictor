@@ -13,6 +13,7 @@ public class CleanedData {
     Date formatedHour;
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-yyyy");
+
     private static final SimpleDateFormat HOUR_FORMAT = new SimpleDateFormat("HH:mm");
 
     public boolean clean(String userPlate, String userDate, String userHour) {
@@ -30,24 +31,27 @@ public class CleanedData {
         return true;
     }
 
-    private Date formatHour(String userHour) throws ParseException {
-        return HOUR_FORMAT.parse(userHour);
-    }
-
-    private int formatDate(String userDate) throws ParseException {
-        Date formatedDate = DATE_FORMAT.parse(userDate);
-        return getDay(formatedDate);
-    }
-    private int formatPlate(String userPlate) {
+    public int formatPlate(String userPlate) {
         char charDigitPlate = userPlate.charAt(userPlate.length() - 1);
         return Character.getNumericValue(charDigitPlate);
     }
+    public int formatDate(String userDate) throws ParseException {
+        Date formatedDate = DATE_FORMAT.parse(userDate);
+        return getDay(formatedDate);
+    }
+    public Date formatHour(String userHour) throws ParseException {
+        HOUR_FORMAT.setLenient(false);
+        return HOUR_FORMAT.parse(userHour);
+    }
+
 
     private boolean isValidData(String userPlate, String userDate, String userHour) {
         return isValidPlate(userPlate) && isValidDate(userDate) && isValidHour(userHour);
     }
 
-    private boolean isValidPlate(String userPlate) {
+    public boolean isValidPlate(String userPlate) {
+        if (userPlate == null) return false;
+
         String pattern = "^[A-Z]{3}-[0-9]{3,4}$";
 
         Pattern regex = Pattern.compile(pattern);
@@ -55,16 +59,19 @@ public class CleanedData {
 
         return matcher.matches();
     }
-    private boolean isValidDate(String userDate) {
+    public boolean isValidDate(String userDate) {
+        DATE_FORMAT.setLenient(false);
+        if (userDate == null) return false;
         try {
             DATE_FORMAT.parse(userDate);
             return true;
         } catch (ParseException e) {
             return false;
         }
-
     }
-    private boolean isValidHour(String userHour) {
+    public boolean isValidHour(String userHour) {
+        if (userHour == null) return false;
+        HOUR_FORMAT.setLenient(false);
         SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
         try {
             formatedHour = hourFormat.parse(userHour);
@@ -72,17 +79,12 @@ public class CleanedData {
         } catch (ParseException e) {
             return false;
         }
-
     }
 
-    private int getDay(Date formatedDate) {
+    public int getDay(Date formatedDate) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(formatedDate);
-
-
         int numberDay = calendar.get(Calendar.DAY_OF_WEEK);
         return (numberDay + 5) % 7 + 1;
-
-
     }
 }
